@@ -17,15 +17,15 @@
 import { codeExport as exporter } from '@seleniumhq/side-utils'
 
 const emitters = {
-  afterAll: empty,
   afterEach,
-  beforeAll: empty,
   beforeEach,
+  inEachBegin: empty,
+  inEachEnd: empty,
+  afterAll: empty,
+  beforeAll: empty,
   declareDependencies,
   declareMethods: empty,
   declareVariables: empty,
-  inEachBegin,
-  inEachEnd,
 }
 
 function generate(hookName) {
@@ -40,19 +40,11 @@ export function generateHooks() {
   return result
 }
 function inEachBegin(){
-  const params = {
-    startingSyntax:{
-      commands: [{level:0, statement: "<?php"}]
-    }
-  }
+  const params = { }
   return params;
 }
 function inEachEnd(){
-  const params = {
-    startingSyntax:{
-      commands: [{level:1, statement: "}"}]
-    }
-  }
+  const params = { }
   return params;
 }
 
@@ -85,17 +77,7 @@ function afterEach() {
 }
 
 function beforeAll() {
-  const params = {
-    startingSyntax: {
-      commands: [
-        { level: 1, statement: 'public function _before(AcceptanceTester $I)' },
-        { level: 1, statement: '{' }
-        ],
-    },
-    endingSyntax: {
-      commands: [{ level: 1, statement: '}' }],
-    }
-  }
+  const params = { }
   return params
 }
 
@@ -133,24 +115,7 @@ function declareDependencies() {
 }
 
 function declareVariables() {
-  const params = {
-    startingSyntax: {
-      commands: [
-        {
-          level: 0,
-          statement: `this.timeout(30000)`,
-        },
-        {
-          level: 0,
-          statement: `let driver`,
-        },
-        {
-          level: 0,
-          statement: 'let vars',
-        },
-      ],
-    },
-  }
+  const params = { }
   return params
 }
 
