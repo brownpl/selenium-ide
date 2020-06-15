@@ -51,7 +51,7 @@ describe('command code emitter', () => {
       }
     }).not.toThrow()
   })
-  it('should emit `add selection` command', () => {
+  it('should emit "add selection" command', () => {
     const command = {
       command: 'addSelection',
       target: 'css=select',
@@ -59,7 +59,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `assert` command', () => {
+  it('should emit "assert" command', () => {
     const command = {
       command: 'assert',
       target: 'varrrName',
@@ -67,7 +67,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `assert alert` command', () => {
+  it('should emit "assert alert" command', () => {
     const command = {
       command: 'assertAlert',
       target: 'an alert',
@@ -75,7 +75,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `assert checked` command', () => {
+  it('should emit "assert checked" command', () => {
     const command = {
       command: 'assertChecked',
       target: 'id=check',
@@ -83,7 +83,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `assert confirmation` command', () => {
+  it('should emit "assert confirmation" command', () => {
     const command = {
       command: 'assertConfirmation',
       target: 'a confirmation',
@@ -91,7 +91,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `assert editable` command', () => {
+  it('should emit "assert editable" command', () => {
     const command = {
       command: 'assertEditable',
       target: 'id=text',
@@ -99,7 +99,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `assert element present` command', () => {
+  it('should emit "assert element present" command', () => {
     const command = {
       command: 'assertElementPresent',
       target: 'id=element',
@@ -107,7 +107,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `assert element not present` command', () => {
+  it('should emit "assert element not present" command', () => {
     const command = {
       command: 'assertElementNotPresent',
       target: 'id=element',
@@ -115,7 +115,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `assert not checked` command', () => {
+  it('should emit "assert not checked" command', () => {
     const command = {
       command: 'assertNotChecked',
       target: 'id=check',
@@ -123,7 +123,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `assert not editable` command', () => {
+  it('should emit "assert not editable" command', () => {
     const command = {
       command: 'assertNotEditable',
       target: 'id=text',
@@ -131,7 +131,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `assert not selected value` command', () => {
+  it('should emit "assert not selected value" command', () => {
     const command = {
       command: 'assertNotSelectedValue',
       target: 'id=select',
@@ -139,7 +139,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `assert not text` command', () => {
+  it('should emit "assert not text" command', () => {
     const command = {
       command: 'assertNotText',
       target: 'id=test',
@@ -147,7 +147,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `assert prompt` command', () => {
+  it('should emit "assert prompt" command', () => {
     const command = {
       command: 'assertPrompt',
       target: 'a prompt',
@@ -163,7 +163,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `assert selected value` command', () => {
+  it('should emit "assert selected value" command', () => {
     const command = {
       command: 'assertSelectedValue',
       target: 'id=select',
@@ -171,7 +171,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `assert text` command', () => {
+  it('should emit "assert text" command', () => {
     const command = {
       command: 'assertText',
       target: 'id=test',
@@ -179,7 +179,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `assert title` command', () => {
+  it('should emit "assert title" command', () => {
     const command = {
       command: 'assertTitle',
       target: 'example title',
@@ -187,7 +187,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `assert value` command', () => {
+  it('should emit "assert value" command', () => {
     const command = {
       command: 'assertValue',
       target: 'id=select',
@@ -195,7 +195,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `click` command', () => {
+  it('should emit "click" command', () => {
     const command = {
       command: 'click',
       target: 'link=button',
@@ -203,7 +203,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `click at` command', () => {
+  it('should emit "click at" command', () => {
     const command = {
       command: 'clickAt',
       target: 'link=button',
@@ -211,7 +211,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `check` command', () => {
+  it('should emit "check" command', () => {
     const command = {
       command: 'check',
       target: 'id=f',
@@ -219,7 +219,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `close` command', () => {
+  it('should emit "close" command', () => {
     const command = {
       command: 'close',
       target: '',
@@ -227,7 +227,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `do` command', () => {
+  it('should emit "do" command', () => {
     const command = {
       command: ControlFlowCommandNames.do,
       target: '',
@@ -237,7 +237,7 @@ describe('command code emitter', () => {
       prettify(command, { fullPayload: true })
     ).resolves.toMatchSnapshot()
   })
-  it('should emit `double click` command', () => {
+  it('should emit "double click" command', () => {
     const command = {
       command: 'doubleClick',
       target: 'link=button',
@@ -245,7 +245,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `double click at` command', () => {
+  it('should emit "double click at" command', () => {
     const command = {
       command: 'doubleClickAt',
       target: 'link=button',
@@ -253,7 +253,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `drag and drop to object` command', () => {
+  it('should emit "drag and drop to object" command', () => {
     const command = {
       command: 'dragAndDropToObject',
       target: 'link=dragged',
@@ -261,7 +261,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `echo` command', () => {
+  it('should emit "echo" command', () => {
     const command = {
       command: 'echo',
       target: 'blah',
@@ -269,7 +269,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `echo` command with variables', () => {
+  it('should emit "echo" command with variables', () => {
     const command = {
       command: 'echo',
       target: '${blah}',
@@ -277,7 +277,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `edit content` command', () => {
+  it('should emit "edit content" command', () => {
     const command = {
       command: 'editContent',
       target: 'id=contentEditable',
@@ -285,7 +285,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `else` command', () => {
+  it('should emit "else" command', () => {
     const command = {
       command: ControlFlowCommandNames.else,
       target: '',
@@ -295,7 +295,7 @@ describe('command code emitter', () => {
       prettify(command, { fullPayload: true })
     ).resolves.toMatchSnapshot()
   })
-  it('should emit `else if` command', () => {
+  it('should emit "else if" command', () => {
     const command = {
       command: ControlFlowCommandNames.elseIf,
       target: 'true',
@@ -305,7 +305,7 @@ describe('command code emitter', () => {
       prettify(command, { fullPayload: true })
     ).resolves.toMatchSnapshot()
   })
-  it('should emit `end` command', async () => {
+  it('should emit "end" command', async () => {
     const command = {
       command: ControlFlowCommandNames.end,
       target: '',
@@ -315,7 +315,7 @@ describe('command code emitter', () => {
       prettify(command, { fullPayload: true })
     ).resolves.toMatchSnapshot()
   })
-  it('should emit `execute script` command', () => {
+  it('should emit "execute script" command', () => {
     const command = {
       command: 'executeScript',
       target: 'javascript',
@@ -323,7 +323,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `execute script` command with return string value', () => {
+  it('should emit "execute script" command with return string value', () => {
     const command = {
       command: 'executeScript',
       target: 'return "a"',
@@ -331,7 +331,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `execute async script` command', () => {
+  it('should emit "execute async script" command', () => {
     const command = {
       command: 'executeAsyncScript',
       target: 'javascript',
@@ -339,7 +339,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `forEach` command', () => {
+  it('should emit "forEach" command', () => {
     const command = {
       command: ControlFlowCommandNames.forEach,
       target: 'collection',
@@ -349,7 +349,7 @@ describe('command code emitter', () => {
       prettify(command, { fullPayload: true })
     ).resolves.toMatchSnapshot()
   })
-  it('should emit `if` command', () => {
+  it('should emit "if" command', () => {
     const command = {
       command: ControlFlowCommandNames.if,
       target: 'true',
@@ -359,7 +359,7 @@ describe('command code emitter', () => {
       prettify(command, { fullPayload: true })
     ).resolves.toMatchSnapshot()
   })
-  it('should emit `mouse down` command', () => {
+  it('should emit "mouse down" command', () => {
     const command = {
       command: 'mouseDown',
       target: 'id=button',
@@ -367,7 +367,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `mouse down at` event', () => {
+  it('should emit "mouse down at" event', () => {
     const command = {
       command: 'mouseDownAt',
       target: 'id=button',
@@ -375,7 +375,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it.skip('should emit `mouse move` event', () => {
+  it('should emit "mouse move" event', () => {
     const command = {
       command: 'mouseMove',
       target: 'id=button',
@@ -383,7 +383,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `mouse move at` event', () => {
+  it('should emit "mouse move at" event', () => {
     const command = {
       command: 'mouseMoveAt',
       target: 'id=button',
@@ -391,7 +391,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `mouse out` event', () => {
+  it('should emit "mouse out" event', () => {
     const command = {
       command: 'mouseOut',
       target: 'id=button',
@@ -399,7 +399,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `mouse over` event', () => {
+  it('should emit "mouse over" event', () => {
     const command = {
       command: 'mouseOver',
       target: 'id=button',
@@ -407,7 +407,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `mouse up` event', () => {
+  it('should emit "mouse up" event', () => {
     const command = {
       command: 'mouseUp',
       target: 'id=button',
@@ -415,7 +415,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `mouse up at` event', () => {
+  it('should emit "mouse up at" event', () => {
     const command = {
       command: 'mouseUpAt',
       target: 'id=button',
@@ -423,7 +423,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `open` with absolute url', () => {
+  it('should emit "open" with absolute url', () => {
     const command = {
       command: 'open',
       target: 'https://www.seleniumhq.org/',
@@ -431,7 +431,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `pause` command', () => {
+  it('should emit "pause" command', () => {
     const command = {
       command: 'pause',
       target: '300',
@@ -439,7 +439,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `remove selection` command', () => {
+  it('should emit "remove selection" command', () => {
     const command = {
       command: 'removeSelection',
       target: 'css=select',
@@ -447,7 +447,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `repeatIf` command', () => {
+  it('should emit "repeatIf" command', () => {
     const command = {
       command: ControlFlowCommandNames.repeatIf,
       target: 'true',
@@ -455,7 +455,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `run` command', () => {
+  it('should emit "run" command', () => {
     const command = {
       command: 'run',
       target: 'some test case',
@@ -463,7 +463,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `run script` command', () => {
+  it('should emit "run script" command', () => {
     const command = {
       command: 'runScript',
       target: "alert('test');alert('Im annoying');",
@@ -471,7 +471,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `select` command', () => {
+  it('should emit "select" command', () => {
     const command = {
       command: 'select',
       target: 'css=select',
@@ -479,7 +479,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `select frame` to select the top frame', () => {
+  it('should emit "select frame" to select the top frame', () => {
     const command = {
       command: 'selectFrame',
       target: 'relative=top',
@@ -487,17 +487,17 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should fail to emit `select window` by using unknown locator', () => {
+  it('should fail to emit "select window" by using unknown locator', () => {
     const command = {
       command: 'selectWindow',
       target: 'notExisting=something',
       value: '',
     }
     return expect(prettify(command)).rejects.toThrow(
-      'Can only emit `select window` using handles'
+      'Can only emit "select window" using handles'
     )
   })
-  it('should emit `select window` to select a window by handle', () => {
+  it('should emit "select window" to select a window by handle', () => {
     const command = {
       command: 'selectWindow',
       target: 'handle=${window}',
@@ -505,7 +505,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `select window` to select a window by name', () => {
+  it('should emit "select window" to select a window by name', () => {
     const command = {
       command: 'selectWindow',
       target: 'name=window',
@@ -513,7 +513,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `select window` to select a window by the local keyword', () => {
+  it('should emit "select window" to select a window by the local keyword', () => {
     const command = {
       command: 'selectWindow',
       target: 'win_ser_local',
@@ -521,7 +521,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `select window` to select a window by implicit index', () => {
+  it('should emit "select window" to select a window by implicit index', () => {
     const command = {
       command: 'selectWindow',
       target: 'win_ser_12',
@@ -529,7 +529,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `send keys` command', () => {
+  it('should emit "send keys" command', () => {
     const command = {
       command: 'sendKeys',
       target: 'id=input',
@@ -537,7 +537,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `send keys` command with a variable input', () => {
+  it('should emit "send keys" command with a variable input', () => {
     const command = {
       command: 'sendKeys',
       target: 'id=input',
@@ -545,7 +545,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `send keys` command with a key press', () => {
+  it('should emit "send keys" command with a key press', () => {
     const command = {
       command: 'sendKeys',
       target: 'id=input',
@@ -553,12 +553,12 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `set speed`', () => {
+  it('should emit "set speed"', () => {
     return expect(
       prettify({ command: 'setSpeed', target: '1000' })
     ).resolves.toMatchSnapshot()
   })
-  it('should emit `setWindowSize`', () => {
+  it('should emit "setWindowSize"', () => {
     const command = {
       command: 'setWindowSize',
       target: '1440x1177',
@@ -582,7 +582,7 @@ describe('command code emitter', () => {
       ),
     ])
   })
-  it('should emit `store` command', () => {
+  it('should emit "store" command', () => {
     const command = {
       command: 'store',
       target: 'some value',
@@ -590,7 +590,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `store attribute` command', () => {
+  it('should emit "store attribute" command', () => {
     const command = {
       command: 'storeAttribute',
       target: 'xpath=button[3]@id',
@@ -598,7 +598,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `store text` command', () => {
+  it('should emit "store text" command', () => {
     const command = {
       command: 'storeText',
       target: 'id=someElement',
@@ -606,7 +606,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `store json` command', () => {
+  it('should emit "store json" command', () => {
     const command = {
       command: 'storeJson',
       target: '[{"a":0}]',
@@ -614,7 +614,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `store title` command', () => {
+  it('should emit "store title" command', () => {
     const command = {
       command: 'storeTitle',
       target: 'blah',
@@ -622,7 +622,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `store value` command', () => {
+  it('should emit "store value" command', () => {
     const command = {
       command: 'storeValue',
       target: 'id=someElement',
@@ -630,7 +630,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `store window handle` command', () => {
+  it('should emit "store window handle" command', () => {
     const command = {
       command: 'storeWindowHandle',
       target: 'windowName',
@@ -638,7 +638,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `store xpath count` command', () => {
+  it('should emit "store xpath count" command', () => {
     const command = {
       command: 'storeXpathCount',
       target: 'xpath=button',
@@ -646,7 +646,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `submit` command', () => {
+  it('should emit "submit" command', () => {
     const command = {
       command: 'submit',
       target: 'id=form',
@@ -654,7 +654,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `times` command', () => {
+  it('should emit "times" command', () => {
     const command = {
       command: ControlFlowCommandNames.times,
       target: '5',
@@ -662,7 +662,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `type` command', () => {
+  it('should emit "type" command', () => {
     const command = {
       command: 'type',
       target: 'id=input',
@@ -670,7 +670,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `uncheck` command', () => {
+  it('should emit "uncheck" command', () => {
     const command = {
       command: 'uncheck',
       target: 'id=f',
@@ -678,7 +678,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `verify` command', () => {
+  it('should emit "verify" command', () => {
     const command = {
       command: 'verify',
       target: 'varrrName',
@@ -686,7 +686,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `verify checked` command', () => {
+  it('should emit "verify checked" command', () => {
     const command = {
       command: 'verifyChecked',
       target: 'id=check',
@@ -694,7 +694,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `verify editable` command', () => {
+  it('should emit "verify editable" command', () => {
     const command = {
       command: 'verifyEditable',
       target: 'id=text',
@@ -702,7 +702,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `verify element present` command', () => {
+  it('should emit "verify element present" command', () => {
     const command = {
       command: 'verifyElementPresent',
       target: 'id=element',
@@ -710,7 +710,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `verify element not present` command', () => {
+  it('should emit "verify element not present" command', () => {
     const command = {
       command: 'verifyElementNotPresent',
       target: 'id=element',
@@ -718,7 +718,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `verify not checked` command', () => {
+  it('should emit "verify not checked" command', () => {
     const command = {
       command: 'verifyNotChecked',
       target: 'id=check',
@@ -726,7 +726,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `verify not editable` command', () => {
+  it('should emit "verify not editable" command', () => {
     const command = {
       command: 'verifyNotEditable',
       target: 'id=text',
@@ -734,7 +734,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `verify not selected value` command', () => {
+  it('should emit "verify not selected value" command', () => {
     const command = {
       command: 'verifyNotSelectedValue',
       target: 'id=select',
@@ -742,7 +742,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `verify not text` command', () => {
+  it('should emit "verify not text" command', () => {
     const command = {
       command: 'verifyNotText',
       target: 'id=test',
@@ -758,7 +758,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `verify value` command', () => {
+  it('should emit "verify value" command', () => {
     const command = {
       command: 'verifyValue',
       target: 'id=select',
@@ -766,7 +766,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `verify selected value` command', () => {
+  it('should emit "verify selected value" command', () => {
     const command = {
       command: 'verifySelectedValue',
       target: 'id=select',
@@ -774,7 +774,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `verify text` command', () => {
+  it('should emit "verify text" command', () => {
     const command = {
       command: 'verifyText',
       target: 'id=test',
@@ -782,7 +782,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `verify title` command', () => {
+  it('should emit "verify title" command', () => {
     const command = {
       command: 'verifyTitle',
       target: 'example title',
@@ -790,7 +790,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `waitForElementEditable` command', () => {
+  it('should emit "waitForElementEditable" command', () => {
     const command = {
       command: 'waitForElementEditable',
       target: 'css=#blah',
@@ -798,7 +798,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `waitForElementPresent` command', () => {
+  it('should emit "waitForElementPresent" command', () => {
     const command = {
       command: 'waitForElementPresent',
       target: 'css=#blah',
@@ -806,7 +806,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `waitForElementVisible` command', () => {
+  it('should emit "waitForElementVisible" command', () => {
     const command = {
       command: 'waitForElementVisible',
       target: 'css=#blah',
@@ -814,7 +814,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `waitForElementNotEditable` command', () => {
+  it('should emit "waitForElementNotEditable" command', () => {
     const command = {
       command: 'waitForElementNotEditable',
       target: 'css=#blah',
@@ -822,7 +822,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `waitForElementNotPresent` command', () => {
+  it('should emit "waitForElementNotPresent" command', () => {
     const command = {
       command: 'waitForElementNotPresent',
       target: 'css=#blah',
@@ -830,7 +830,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `waitForElementNotVisible` command', () => {
+  it('should emit "waitForElementNotVisible" command', () => {
     const command = {
       command: 'waitForElementNotVisible',
       target: 'css=#blah',
@@ -838,7 +838,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `waitForText` command', () => {
+  it('should emit "waitForText" command', () => {
     const command = {
       command: 'waitForText',
       target: 'css=#blah',
@@ -846,7 +846,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `answer on visible prompt` command', () => {
+  it('should emit "answer on visible prompt" command', () => {
     const command = {
       command: 'webdriverAnswerOnVisiblePrompt',
       target: 'an answer',
@@ -854,7 +854,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `choose cancel on visible prompt` command', () => {
+  it('should emit "choose cancel on visible prompt" command', () => {
     const command = {
       command: 'webdriverChooseCancelOnVisiblePrompt',
       target: '',
@@ -862,7 +862,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `choose ok on visible confirmation` command', () => {
+  it('should emit "choose ok on visible confirmation" command', () => {
     const command = {
       command: 'webdriverChooseOkOnVisibleConfirmation',
       target: '',
@@ -870,7 +870,7 @@ describe('command code emitter', () => {
     }
     return expect(prettify(command)).resolves.toMatchSnapshot()
   })
-  it('should emit `while` command', () => {
+  it('should emit "while" command', () => {
     const command = {
       command: ControlFlowCommandNames.while,
       target: 'true',

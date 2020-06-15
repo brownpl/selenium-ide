@@ -36,15 +36,15 @@ export default {
 }
 
 function emitId(selector) {
-  return Promise.resolve(`['id' => '${selector}']`)
+  return Promise.resolve(`['id'=>'${selector}']`)
 }
 
 function emitName(selector) {
-  return Promise.resolve(`['name' => '${selector}']`)
+  return Promise.resolve(`['name'=>'${selector}']`)
 }
 
 function emitLink(selector) {
-  return Promise.resolve(`['link' => '${selector}']`)
+  return Promise.resolve(`['link'=>'${selector}']`)
 }
 
 function emitPartialLinkText(selector) {
@@ -52,9 +52,10 @@ function emitPartialLinkText(selector) {
 }
 
 function emitCss(selector) {
-  return Promise.resolve(`['css' => '${selector}']`)
+  return Promise.resolve(`['css'=>'${selector}']`)
 }
 
 function emitXpath(selector) {
-  return Promise.resolve(`['xpath' => \"${selector}\"]`)
+
+  return Promise.resolve(`['xpath'=>"${selector.replace(/'/g,'"')}"]`)
 }

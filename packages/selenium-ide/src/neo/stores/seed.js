@@ -390,11 +390,11 @@ export default function seed(store, numberOfSuites = 0) {
   clickAtTest.createCommand(undefined, 'open', '/')
   clickAtTest.createCommand(undefined, 'clickAt', 'css=a')
 
-  const commentTest = store.createTestCase('comment')
-  commentTest.createCommand(undefined, '//commented code')
-  commentTest.createCommand(undefined, '', '', '', 'blah')
-  commentTest.createCommand(undefined, '', '', '')
-  commentTest.createCommand(undefined, 'open', '/', '', 'also blah')
+  // const commentTest = store.createTestCase('comment')
+  // commentTest.createCommand(undefined, '//commented code')
+  // commentTest.createCommand(undefined, '', '', '', 'blah')
+  // commentTest.createCommand(undefined, '', '', '')
+  // commentTest.createCommand(undefined, 'open', '/', '', 'also blah')
 
   const framesTest = store.createTestCase('frames')
   framesTest.createCommand(undefined, 'open', '/nested_frames')

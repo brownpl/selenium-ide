@@ -18,11 +18,8 @@
 import { codeExport as exporter } from '@seleniumhq/side-utils'
 import location from './location'
 import selection from './selection'
-export const emitters ={
-  click: emitClick,
-  type: emitType,
-}
-export const emitters_X = {
+
+export const emitters = {
   addSelection: emitSelect,
   answerOnNextPrompt: skip,
   assert: emitAssert,
@@ -66,18 +63,18 @@ export const emitters_X = {
   mouseDown: emitMouseDown,
   mouseDownAt: emitMouseDown,
   mouseMove: emitMouseMove,
-  mouseMoveAt: emitMouseMove,
+  mouseMoveAt: emitMouseMoveAt,
   mouseOver: emitMouseMove,
   mouseOut: emitMouseOut,
   mouseUp: emitMouseUp,
   mouseUpAt: emitMouseUp,
   open: emitOpen,
   pause: emitPause,
-  removeSelection: emitSelect,
   repeatIf: emitControlFlowRepeatIf,
   run: emitRun,
   runScript: emitRunScript,
   select: emitSelect,
+  removeSelection: emitRemoveSelection,
   selectFrame: emitSelectFrame,
   selectWindow: emitSelectWindow,
   sendKeys: emitSendKeys,
@@ -141,11 +138,11 @@ function canEmit(commandName) {
 }
 
 function variableLookup(varName) {
-  return `vars["${varName}"]`
+  return `$${varName}`
 }
 
 function variableSetter(varName, value) {
-  return varName ? `vars["${varName}"] = ${value}` : ''
+  return varName ? `$${varName} = ${value}` : ''
 }
 
 function emitWaitForWindow() {
@@ -190,78 +187,52 @@ async function emitNewWindowHandling(command, emittedCommand) {
 }
 
 function emitAssert(varName, value) {
-  return Promise.resolve(`assert(vars["${varName}"].toString() == "${value}")`)
+  return Promise.resolve(`$I->assertEquals($${varName}, ${value});`)
 }
 
-function emitAssertAlert(alertText) {
+async function emitAssertAlert(alertText) {
   return Promise.resolve(
-    `assert(await driver.switchTo().alert().getText() == "${alertText}")`
+    await codeception('assertAlert', null, `"${alertText}"`)
   )
 }
 
-function emitAnswerOnNextPrompt(textToSend) {
-  const commands = [
-    { level: 0, statement: `{` },
-    { level: 1, statement: 'const alert = await driver.switchTo().alert()' },
-    { level: 1, statement: `await alert.sendKeys("${textToSend}")` },
-    { level: 1, statement: 'await alert.accept()' },
-    { level: 0, statement: `}` },
-  ]
-  return Promise.resolve({ commands })
+async function emitAnswerOnNextPrompt(textToSend) {
+  let response = await codeception('answerOnNextPrompt', null, `"${textToSend}"`);
+  response += await codeception('chooseOkOnNextConfirmation')
+  return Promise.resolve(response);
 }
 
-async function emitCheck(locator) {
-  const commands = [
-    {
-      level: 0,
-      statement: `{`,
-    },
-    {
-      level: 1,
-      statement: `const element = await driver.findElement(${await location.emit(
-        locator
-      )})`,
-    },
-    {
-      level: 1,
-      statement: 'if (!(await element.isSelected())) await element.click()',
-    },
-    {
-      level: 0,
-      statement: `}`,
-    },
-  ]
-  return Promise.resolve({ commands })
+async function emitCheck(target) {
+  return Promise.resolve(await codeception('check', target))
 }
 
-function emitChooseCancelOnNextConfirmation() {
-  return Promise.resolve(`await driver.switchTo().alert().dismiss()`)
+async function emitChooseCancelOnNextConfirmation() {
+  return Promise.resolve(await codeception('chooseCancelOnNextConfirmation'))
 }
 
-function emitChooseOkOnNextConfirmation() {
-  return Promise.resolve(`await driver.switchTo().alert().accept()`)
+async function emitChooseOkOnNextConfirmation() {
+  return Promise.resolve(await codeception('chooseOkOnNextConfirmation'))
 }
 
 async function emitClick(target) {
-  return Promise.resolve(
-    `$I->click(${await location.emit(target)});`
-  )
+  return Promise.resolve(await codeception('click', target))
 }
 
 async function emitClose() {
-  return Promise.resolve(`await driver.close()`)
+  return Promise.resolve(`$this->getModule('WebDriver')->_closeSession();`)
 }
 
-function generateExpressionScript(script) {
-  return `await driver.executeScript("return (${
-    script.script
-  })"${generateScriptArguments(script)})`
+async function generateExpressionScript(script) {
+  return Promise.resolve(
+    `$I->executeJS("return ${script.script}"${generateScriptArguments(script)})`
+  )
 }
 
 function generateScriptArguments(script) {
-  return `${script.argv.length ? ', ' : ''}${script.argv
-    .map(varName => `vars["${varName}"]`)
-    .join(',')}`
+  return `${script.argv.length ? ', ' : ''}${
+    script.argv
+      .map(varName => `$${varName}`)
+      .join(',')}`
 }
 
 function emitControlFlowDo() {
@@ -279,12 +250,12 @@ function emitControlFlowElse() {
   })
 }
 
-function emitControlFlowElseIf(script) {
+async function emitControlFlowElseIf(script) {
   return Promise.resolve({
     commands: [
       {
         level: 0,
-        statement: `} else if (!!${generateExpressionScript(script)}) {`,
+        statement: `} else if (${await generateExpressionScript(script)}) {`,
       },
     ],
     startingLevelAdjustment: -1,
@@ -299,10 +270,10 @@ function emitControlFlowEnd() {
   })
 }
 
-function emitControlFlowIf(script) {
+async function emitControlFlowIf(script) {
   return Promise.resolve({
     commands: [
-      { level: 0, statement: `if (!!${generateExpressionScript(script)}) {` },
+      { level: 0, statement: `if (${await generateExpressionScript(script)}) {` },
     ],
     endingLevelAdjustment: 1,
   })
@@ -313,26 +284,26 @@ function emitControlFlowForEach(collectionVarName, iteratorVarName) {
     commands: [
       {
         level: 0,
-        statement: `const collection = vars["${collectionVarName}"]`,
+        statement: `$collection = $${collectionVarName};`,
       },
       {
         level: 0,
-        statement: `for (let i = 0; i < collection.length - 1; i++) {`,
+        statement: `for ($i = 0; $i < sizeof($collection); $i++) {`,
       },
       {
         level: 1,
-        statement: `vars["${iteratorVarName}"] = vars["${collectionVarName}"][i]`,
+        statement: `$${iteratorVarName} = $${collectionVarName};`,
       },
     ],
   })
 }
 
-function emitControlFlowRepeatIf(script) {
+async function emitControlFlowRepeatIf(script) {
   return Promise.resolve({
     commands: [
       {
         level: 0,
-        statement: `} while(!!${generateExpressionScript(script)})`,
+        statement: `} while(${await generateExpressionScript(script)});`,
       },
     ],
     startingLevelAdjustment: -1,
@@ -343,72 +314,38 @@ function emitControlFlowTimes(target) {
   const commands = [
     {
       level: 0,
-      statement: `const times = ${target}`,
+      statement: `$times = ${target};`,
     },
     {
       level: 0,
-      statement: `for(let i = 0; i < times; i++) {`,
+      statement: `for($i = 0; i < sizeof($times); $i++) {`,
     },
   ]
   return Promise.resolve({ commands, endingLevelAdjustment: 1 })
 }
 
-function emitControlFlowWhile(script) {
+async function emitControlFlowWhile(script) {
   return Promise.resolve({
     commands: [
-      { level: 0, statement: `while(!!${generateExpressionScript(script)}) {` },
+      { level: 0, statement: `while(${await generateExpressionScript(script)}) {` },
     ],
     endingLevelAdjustment: 1,
   })
 }
 
 async function emitDoubleClick(target) {
-  const commands = [
-    { level: 0, statement: `{` },
-    {
-      level: 1,
-      statement: `const element = await driver.findElement(${await location.emit(
-        target
-      )})`,
-    },
-    {
-      level: 1,
-      statement:
-        'await driver.actions({ bridge: true}).doubleClick(element).perform()',
-    },
-    { level: 0, statement: `}` },
-  ]
-  return Promise.resolve({ commands })
+  return Promise.resolve(await codeception('doubleClick', target));
 }
 
 async function emitDragAndDrop(dragged, dropped) {
-  const commands = [
-    { level: 0, statement: `{` },
-    {
-      level: 1,
-      statement: `const dragged = await driver.findElement(${await location.emit(
-        dragged
-      )})`,
-    },
-    {
-      level: 1,
-      statement: `const dropped = await driver.findElement(${await location.emit(
-        dropped
-      )})`,
-    },
-    {
-      level: 1,
-      statement:
-        'await driver.actions({ bridge: true }).dragAndDrop(dragged, dropped).perform()',
-    },
-    { level: 0, statement: `}` },
-  ]
-  return Promise.resolve({ commands })
+  dragged = await location.emit(dragged);
+  dropped = await location.emit(dropped);
+  return Promise.resolve(`$I->dragAndDrop(${dragged}, ${dropped});`);
 }
 
 async function emitEcho(message) {
-  const _message = message.startsWith('vars[') ? message : `"${message}"`
-  return Promise.resolve(`console.log(${_message})`)
+  const _message = message.startsWith('$') ? message : `"${message}"`
+  return Promise.resolve(`print(${_message});`)
 }
 
 async function emitEditContent(locator, content) {
@@ -416,13 +353,13 @@ async function emitEditContent(locator, content) {
     { level: 0, statement: `{` },
     {
       level: 1,
-      statement: `const element = await driver.findElement(${await location.emit(
+      statement: `$element = $webdriver->findElement(${await location.emit(
         locator
       )})`,
     },
     {
       level: 1,
-      statement: `await driver.executeScript("if(arguments[0].contentEditable === 'true') {arguments[0].innerText = '${content}'}", element)`,
+      statement: `$webdriver->executeScript("if(arguments[0].contentEditable === 'true') {arguments[0].innerText = '${content}'}", $element)`,
     },
     { level: 0, statement: `}` },
   ]
@@ -431,103 +368,60 @@ async function emitEditContent(locator, content) {
 
 async function emitExecuteScript(script, varName) {
   const scriptString = script.script.replace(/`/g, '\\`')
-  const result = `await driver.executeScript("${scriptString}"${generateScriptArguments(
+  console.log(script);
+  return Promise.resolve(
+    variableSetter(varName, await codeception('runScript', null, `"${scriptString}"${generateScriptArguments(
     script
-  )})`
-  return Promise.resolve(variableSetter(varName, result))
+  )}`)))
 }
 
 async function emitExecuteAsyncScript(script, varName) {
-  const result = `await driver.executeAsyncScript("var callback = arguments[arguments.length - 1];${
+  const result = `$I->executeAsyncJS("var callback = arguments[arguments.length - 1];${
     script.script
   }.then(callback).catch(callback);${generateScriptArguments(script)}")`
   return Promise.resolve(variableSetter(varName, result))
 }
 
 async function emitMouseDown(locator) {
-  const commands = [
-    { level: 0, statement: `{` },
-    {
-      level: 1,
-      statement: `const element = await driver.findElement(${await location.emit(
-        locator
-      )})`,
-    },
-    {
-      level: 1,
-      statement:
-        'await driver.actions({ bridge: true }).moveToElement(element).clickAndHold().perform()',
-    },
-    { level: 0, statement: `}` },
-  ]
-  return Promise.resolve({ commands })
+  const loc = await location.emit(locator);
+  return Promise.resolve(selenium(`
+    $coordinates = $webdriver->findElement(${loc})->getCoordinates();
+    $webdriver->getMouse()->mouseDown($coordinates);
+  `))
 }
 
 async function emitMouseMove(locator) {
-  const commands = [
-    { level: 0, statement: `{` },
-    {
-      level: 1,
-      statement: `const element = await driver.findElement(${await location.emit(
-        locator
-      )})`,
-    },
-    {
-      level: 1,
-      statement:
-        'await driver.actions({ bridge: true }).moveToElement(element).perform()',
-    },
-    { level: 0, statement: `}` },
-  ]
-  return Promise.resolve({ commands })
+  return Promise.resolve(codeception('mouseMove', locator))
 }
-
+async function emitMouseMoveAt(locator, value) {
+  return Promise.resolve(codeception('mouseMove', locator, null, value))
+}
 async function emitMouseOut() {
-  const commands = [
-    { level: 0, statement: `{` },
-    {
-      level: 1,
-      statement: `const element = await driver.findElement(By.CSS_SELECTOR, "body")`,
-    },
-    {
-      level: 1,
-      statement:
-        'await driver.actions({ bridge: true }).moveToElement(element, 0, 0).perform()',
-    },
-    { level: 0, statement: `}` },
-  ]
-  return Promise.resolve({ commands })
+  return Promise.resolve(`$I->moveMouseTo("body", 0, 0);`)
 }
 
 async function emitMouseUp(locator) {
-  const commands = [
-    { level: 0, statement: `{` },
-    {
-      level: 1,
-      statement: `const element = await driver.findElement(${await location.emit(
-        locator
-      )})`,
-    },
-    {
-      level: 1,
-      statement:
-        'await driver.actions({ bridge: true }).moveToElement(element).release().perform()',
-    },
-    { level: 0, statement: `}` },
-  ]
-  return Promise.resolve({ commands })
+  const loc = await location.emit(locator);
+  return Promise.resolve(selenium(`
+    $coordinates = $webdriver->findElement(${loc})->getCoordinates();
+    $webdriver->getMouse()->mouseUp($coordinates);
+  `))
 }
 
-function emitOpen(target) {
-  const url = /^(file|http|https):\/\//.test(target)
-    ? `"${target}"`
-    : `"${global.baseUrl}${target}"`
-  return Promise.resolve(`await driver.get(${url})`)
+async function emitOpen(target) {
+  console.log(target);
+  const url = /^(file|http|https):\/\//.test(target);
+  if(url) {
+    console.log('a');
+    return Promise.resolve(await codeception('openUrl', null, `"${target}"`))
+  }
+  else{
+    return Promise.resolve(await codeception('openPage', null, `"${target}"`))
+  }
 }
 
 async function emitPause(time) {
-  const commands = [{ level: 0, statement: `await driver.sleep(${time})` }]
-  return Promise.resolve({ commands })
+  return Promise.resolve( await codeception('pause', null, time));
 }
 
 async function emitRun(testName) {
@@ -536,62 +430,42 @@ async function emitRun(testName) {
 
 async function emitRunScript(script) {
   return Promise.resolve(
-    `await driver.executeScript("${script.script}${generateScriptArguments(
-      script
-    )}")`
+    codeception('runScript', null, `"${script.script}${generateScriptArguments(script)}"`)
   )
 }
 
 async function emitSetWindowSize(size) {
   const [width, height] = size.split('x')
   return Promise.resolve(
-    `await driver.manage().window().setRect(${width}, ${height})`
+    `$I->resizeWindow(${width}, ${height});`
   )
 }
 
 async function emitSelect(selectElement, option) {
-  const commands = [
-    { level: 0, statement: `{` },
-    {
-      level: 1,
-      statement: `const dropdown = await driver.findElement(${await location.emit(
-        selectElement
-      )})`,
-    },
-    {
-      level: 1,
-      statement: `await dropdown.findElement(${await selection.emit(
-        option
-      )}).click()`,
-    },
-    { level: 0, statement: `}` },
-  ]
-  return Promise.resolve({ commands })
+  const options = option.split('=');
+  return Promise.resolve( await codeception('select', selectElement, `"${options[1]}"`))
+}
+async function emitRemoveSelection(selectElement, option) {
+  const options = option.split('=');
+  return Promise.resolve( await codeception('removeSelection', selectElement, `"${options[1]}"`))
 }
 
 async function emitSelectFrame(frameLocation) {
   if (frameLocation === 'relative=top' || frameLocation === 'relative=parent') {
-    return Promise.resolve('await driver.switchTo().defaultContent()')
+    return Promise.resolve(selenium(`
+      $webdriver->switchTo()->defaultContent();
+    `))
   } else if (/^index=/.test(frameLocation)) {
-    return Promise.resolve(
-      `await driver.switchTo().frame(${Math.floor(
-        frameLocation.split('index=')[1]
-      )})`
-    )
+    const frame = Math.floor(frameLocation.split('index=')[1]);
+    return Promise.resolve(selenium(`
+      $webdriver->switchTo()->frame(${frame});
+    `))
   } else {
-    return Promise.resolve({
-      commands: [
-        { level: 0, statement: `{` },
-        {
-          level: 0,
-          statement: `const element = await driver.findElement(${await location.emit(
-            frameLocation
-          )})`,
-        },
-        { level: 0, statement: 'await driver.switchTo().frame(element)' },
-        { level: 0, statement: `}` },
-      ],
-    })
+    const loc = location.emit(frameLocation)
+    return Promise.resolve(selenum(`
+       $element = $webdriver->findElement(${loc});
+       $webdriver->switchTo()->frame($element);
+    `))
   }
 }
 
@@ -637,11 +511,11 @@ function generateSendKeysInput(value) {
   if (typeof value === 'object') {
     return value
       .map(s => {
-        if (s.startsWith('vars[')) {
+        if (s.startsWith('$')) {
           return s
         } else if (s.startsWith('Key[')) {
           const key = s.match(/\['(.*)'\]/)[1]
-          return `Key.${key}`
+          return `'\\Facebook\\WebDriver\\WebDriverKeys::${key}'`
         } else {
           return `"${s}"`
         }
@@ -657,21 +531,18 @@ function generateSendKeysInput(value) {
 }
 
 async function emitSendKeys(target, value) {
-  return Promise.resolve(
-    `await driver.findElement(${await location.emit(
-      target
-    )}).sendKeys(${generateSendKeysInput(value)})`
-  )
+  const keys = generateSendKeysInput(value);
+  return Promise.resolve(codeception('type', target, keys))
 }
 
 function emitSetSpeed() {
   return Promise.resolve(
-    'console.log("`set speed` is a no-op in code export, use `pause` instead")'
+    'print("`set speed` is a no-op in code export, use `pause` instead");'
   )
 }
 
 async function emitStore(value, varName) {
-  return Promise.resolve(variableSetter(varName, `"${value}"`))
+  return Promise.resolve(variableSetter(varName, `"${value}";`))
 }
 
 async function emitStoreAttribute(locator, varName) {
@@ -693,25 +564,19 @@ async function emitStoreAttribute(locator, varName) {
 }
 
 async function emitStoreJson(json, varName) {
-  return Promise.resolve(variableSetter(varName, `JSON.parse('${json}')`))
+  return Promise.resolve(variableSetter(varName, `json_decode('${json}');`))
 }
 
 async function emitStoreText(locator, varName) {
-  const result = `await driver.findElement(${await location.emit(
-    locator
-  )}).getText()`
-  return Promise.resolve(variableSetter(varName, result))
+  return Promise.resolve(variableSetter(varName, await codeception('storeText',locator)))
 }
 
 async function emitStoreTitle(_, varName) {
-  return Promise.resolve(variableSetter(varName, 'await driver.getTitle()'))
+  return Promise.resolve(variableSetter(varName, await codeception('storeText', 'xpath=//title')))
 }
 
 async function emitStoreValue(locator, varName) {
-  const result = `await driver.findElement(${await location.emit(
-    locator
-  )}).getAttribute("value")`
-  return Promise.resolve(variableSetter(varName, result))
+  return Promise.resolve(variableSetter(varName, await codeception('storeValue', locator)))
 }
 
 async function emitStoreWindowHandle(varName) {
@@ -729,201 +594,70 @@ async function emitStoreXpathCount(locator, varName) {
 
 async function emitSubmit(_locator) {
   return Promise.resolve(
-    `raise Exception("\`submit\` is not a supported command in Selenium Webdriver. Please re-record the step in the IDE.")`
+    await codeception('click', _locator)
   )
 }
 
 async function emitType(target, value) {
-  return Promise.resolve(
-    `$I->fillField(${await location.emit(
-      target
-    )}, ${generateSendKeysInput(value)});`
-  )
+  return Promise.resolve(await codeception('type', target, `"${value}"`))
 }
 
 async function emitUncheck(locator) {
-  const commands = [
-    { level: 0, statement: `{` },
-    {
-      level: 1,
-      statement: `const element = await driver.findElement(${await location.emit(
-        locator
-      )})`,
-    },
-    {
-      level: 1,
-      statement: 'if (await element.isSelected()) await element.click()',
-    },
-    { level: 0, statement: `}` },
-  ]
-  return Promise.resolve({ commands })
+  return Promise.resolve(await codeception('uncheck', locator));
 }
 
 async function emitVerifyChecked(locator) {
-  return Promise.resolve(
-    `assert(await driver.findElement(${await location.emit(
-      locator
-    )}).isSelected())`
-  )
+  return Promise.resolve(await codeception('verifyChecked', locator));
 }
 
 async function emitVerifyEditable(locator) {
-  const commands = [
-    { level: 0, statement: `{` },
-    {
-      level: 1,
-      statement: `const element = await driver.findElement(${await location.emit(
-        locator
-      )})`,
-    },
-    { level: 1, statement: 'assert(await element.isEnabled())' },
-    { level: 0, statement: `}` },
-  ]
-  return Promise.resolve({ commands })
+  const loc = await location.emit(locator);
+  return Promise.resolve(selenium(`
+    $webdriver->findElement(${loc})->isEnabled();
+  `))
 }
 
 async function emitVerifyElementPresent(locator) {
-  const commands = [
-    { level: 0, statement: `{` },
-    {
-      level: 1,
-      statement: `const elements = await driver.findElements(${await location.emit(
-        locator
-      )})`,
-    },
-    { level: 1, statement: 'assert(elements.length)' },
-    { level: 0, statement: `}` },
-  ]
-  return Promise.resolve({ commands })
+  return Promise.resolve(await codeception('verifyElementPresent', locator))
 }
 
 async function emitVerifyElementNotPresent(locator) {
-  const commands = [
-    { level: 0, statement: `{` },
-    {
-      level: 1,
-      statement: `const elements = await driver.findElements(${await location.emit(
-        locator
-      )})`,
-    },
-    { level: 1, statement: 'assert(!elements.length)' },
-    { level: 0, statement: `}` },
-  ]
-  return Promise.resolve({ commands })
+  return Promise.resolve(await codeception('verifyElementNotPresent', locator))
 }
 
 async function emitVerifyNotChecked(locator) {
-  return Promise.resolve(
-    `assert(!await driver.findElement(${await location.emit(
-      locator
-    )}).isSelected())`
-  )
+  return Promise.resolve(await codeception('verifyNotChecked', locator));
 }
 
 async function emitVerifyNotEditable(locator) {
-  const commands = [
-    { level: 0, statement: `{` },
-    {
-      level: 1,
-      statement: `const element = await driver.findElement(${await location.emit(
-        locator
-      )})`,
-    },
-    { level: 1, statement: 'assert(!await element.isEnabled())' },
-    { level: 0, statement: `}` },
-  ]
-  return Promise.resolve({ commands })
+  const loc = await location.emit(locator);
+  return Promise.resolve(selenium(`
+    !$webdriver->findElement(${loc})->isEnabled();
+  `))
 }
 
 async function emitVerifyNotSelectedValue(locator, expectedValue) {
-  const commands = [
-    { level: 0, statement: `{` },
-    {
-      level: 1,
-      statement: `const value = await driver.findElement(${await location.emit(
-        locator
-      )}).getAttribute("value")`,
-    },
-    {
-      level: 1,
-      statement: `assert(value !== "${exporter.emit.text(expectedValue)}")`,
-    },
-    { level: 0, statement: `}` },
-  ]
-  return Promise.resolve({ commands })
+  return Promise.resolve(await codeception('verifyNotSelectedValue',locator, expectedValue))
 }
 
 async function emitVerifyNotText(locator, text) {
-  const commands = [
-    { level: 0, statement: `{` },
-    {
-      level: 1,
-      statement: `const text = await driver.findElement(${await location.emit(
-        locator
-      )}).getText()`,
-    },
-    { level: 1, statement: `assert(text !== "${exporter.emit.text(text)}")` },
-    { level: 0, statement: `}` },
-  ]
-  return Promise.resolve({ commands })
+  return Promise.resolve(await codeception('verifyNotText', locator, text, true))
 }
 
 async function emitVerifySelectedLabel(locator, labelValue) {
-  const commands = [
-    { level: 0, statement: `{` },
-    {
-      level: 1,
-      statement: `const element = await driver.findElement(${await location.emit(
-        locator
-      )})`,
-    },
-    {
-      level: 1,
-      statement:
-        'const locator = `option[@value=\'${await element.getAttribute("value")}\']`',
-    },
-    {
-      level: 1,
-      statement:
-        'const selectedText = await element.findElement(By.xpath(locator)).getText()',
-    },
-    { level: 1, statement: `assert(selectedText == "${labelValue}")` },
-    { level: 0, statement: `}` },
-  ]
-  return Promise.resolve({
-    commands,
-  })
+  return Promise.resolve(await codeception('verifySelectedLabel',locator, `"${labelValue}"`))
 }
 
 async function emitVerifyText(locator, text) {
-  const commands = [
-    {
-      level: 0,
-      statement: `assert(await driver.findElement(${await location.emit(
-        locator
-      )}).getText() == "${exporter.emit.text(text)}")`,
-    },
-  ]
-  return Promise.resolve({ commands })
+  return Promise.resolve(await codeception('verifyText', locator, text, true))
 }
 
 async function emitVerifyValue(locator, value) {
-  const commands = [
-    { level: 0, statement: `{` },
-    {
-      level: 1,
-      statement: `const value = await driver.findElement(${await location.emit(
-        locator
-      )}).getAttribute("value")`,
-    },
-    { level: 1, statement: `assert(value == "${value}")` },
-    { level: 0, statement: `}` },
-  ]
-  return Promise.resolve({ commands })
+  return Promise.resolve(await codeception('verifyValue', locator, `"${value}"`))
 }
 
 async function emitVerifyTitle(title) {
-  return Promise.resolve(`assert(await driver.getTitle() == "${title}")`)
+  return Promise.resolve(await codeception('verifyTitle', null, `"${title}"`));
 }
 
 function skip() {
@@ -948,28 +682,26 @@ async function emitWaitForElementNotPresent(locator, timeout) {
 
 async function emitWaitForElementVisible(locator, timeout) {
   return Promise.resolve(
-    `await driver.wait(until.elementIsVisible(await driver.findElement(${await location.emit(
-      locator
-    )})), ${Math.floor(timeout)})`
+    await codeception('waitForElementVisible', locator, `${Math.floor(timeout)}`)
   )
 }
 
 async function emitWaitForElementNotVisible(locator, timeout) {
   return Promise.resolve(
-    `await driver.wait(until.elementIsNotVisible(await driver.findElement(${await location.emit(
-      locator
-    )})), ${Math.floor(timeout)})`
+    await codeception('waitForElementNotVisible', locator, `${Math.floor(timeout)}`)
   )
 }
 
 async function emitWaitForElementEditable(locator, timeout) {
-  return Promise.resolve(
-    `await driver.wait(until.elementIsEnabled(await driver.findElement(${await location.emit(
-      locator
-    )})), ${Math.floor(timeout)})`
-  )
+  const loc = await location.emit(locator);
+  const time = Math.floor(timeout);
+  return Promise.resolve(selenium(`
+    $webdriver->wait(${time})->until($webdriver->findElement(${loc})->isEnabled());
+  `))
 }
-
+// $driver->wait(10, 1000)->until(
+//   WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::id('first_name'))
+// );
 async function emitWaitForElementNotEditable(locator, timeout) {
   return Promise.resolve(
     `await driver.wait(until.elementIsDisabled(await driver.findElement(${await location.emit(
@@ -981,9 +713,8 @@ async function emitWaitForElementNotEditable(locator, timeout) {
 async function emitWaitForText(locator, text) {
   const timeout = 30000
   return Promise.resolve(
-    `await driver.wait(until.elementTextIs(await driver.findElement(${await location.emit(
-      locator
-    )}), '${text}'), ${Math.floor(timeout)})`
+    await codeception('waitForText', locator, text, `${Math.floor(timeout)}`)
+    //probably need to pass in locator
   )
 }
 
@@ -992,4 +723,74 @@ export default {
   emit,
   register,
   extras: { emitWaitForWindow },
+}
+
+
+const codeceptionMap = {
+  'click': 'click',
+  'type' : 'fillField',
+  'check': 'checkOption',
+  'doubleClick': 'doubleClick',
+  'pause': 'wait',
+  'select': 'selectOption',
+  'openUrl': 'amOnUrl',
+  'openPage': 'amOnPage',
+  'runScript': 'executeJS',
+  'uncheck': 'uncheckOption',
+  'executeAsyncScript': 'executeAsyncJS',
+  'verifyChecked': 'seeCheckboxIsChecked',
+  'verifyNotChecked': 'dontSeeCheckboxIsChecked',
+  'storeText': 'grabTextFrom',
+  'storeValue': 'grabValueFrom',
+  'submit': 'click',
+  'verifyTitle': 'seeInTitle',
+  'verifyValue': 'seeInField',
+  'waitForElementVisible': 'waitForElementVisible',
+  'waitForElementNotVisible': 'waitForElementNotVisible',
+  'waitForText': 'waitForText',
+  'verifyText': 'see',
+  'chooseOkOnNextConfirmation': 'acceptPopup',
+  'chooseCancelOnNextConfirmation': 'cancelPopup',
+  'answerOnNextPrompt': 'typeInPopup',
+  'assertAlert': 'seeInPopup',
+  'removeSelection': 'unselectOption',
+  'verifyElementPresent': 'seeElementInDOM',
+  'verifyElementNotPresent': 'dontSeeElementInDOM',
+  'verifyNotSelectedValue': 'dontSeeInField',
+  'verifySelectedLabel': 'seeInField',
+  'verifyNotText': 'dontSee',
+  'mouseMove': 'moveMouseOver'
+
+};
+
+// Specials:
+// emitDragAndDrop
+
+async function codeception(command=null, locator=null, value=null, flipLocationAndValue =false){
+  const cCommand = codeceptionMap[command];
+  if(!locator && !value)
+  {
+    return `$I->${cCommand}();`;
+  }
+  if(!locator)
+  {
+    return `$I->${cCommand}(${value});`
+  }
+  else {
+    const loc = await location.emit(locator);
+    if (value) {
+      if(flipLocationAndValue) {
+        return `$I->${cCommand}("${value}", ${loc});`
+      } else {
+        return `$I->${cCommand}(${loc}, ${value});`
+      }
+    } else {
+      return `$I->${cCommand}(${loc});`
+    }
+  }
+}
+function selenium(code){
+  return `$I->executeInSelenium(function (\\Facebook\\WebDriver\\Remote\\RemoteWebDriver $webdriver) {
+    ${code}
+  });`
 }

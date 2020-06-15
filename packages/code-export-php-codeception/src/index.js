@@ -35,28 +35,35 @@ opts.generateMethodDeclaration = generateMethodDeclaration
 
 // Create generators for dynamic string creation of primary entities (e.g., filename, methods, test, and suite)
 function generateTestDeclaration(name) {
-  return `public function ${name}(AcceptanceTester $I){`
+  return `public function ${camelize(name)}(AcceptanceTester $I){`
 }
 
 function generateMethodDeclaration(name) {
   return {
-    body: `public function ${exporter.parsers.uncapitalize(
+    body: `public function ${camelize(
       exporter.parsers.sanitizeName(name)
-    )}(){`,
+    )}(AcceptanceTester $I){`,
     terminatingKeyword: '}',
   }
 }
 
 function generateSuiteDeclaration(name) {
   return `class ${exporter.parsers.capitalize(
-    exporter.parsers.sanitizeName(name)
-  )}{`;
+    camelize(name)
+  )}Cest\n{`;
 }
 
 function generateFilename(name) {
-  return `${exporter.parsers.uncapitalize(
-    exporter.parsers.sanitizeName(name)
-  )}${opts.fileExtension}`
+  return `${
+    camelize(name)
+  }Cest${opts.fileExtension}`
+}
+
+function camelize(str) {
+  return str.replace(/\W+(.)/g, function(match, chr)
+  {
+    return chr.toUpperCase();
+  });
 }
 
 // Emit an individual test, wrapped in a suite (using the test name as the suite name)

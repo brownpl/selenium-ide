@@ -1,0 +1,44 @@
+# suite config
+suites:
+    acceptance:
+        actor: AcceptanceTester
+        path: .
+        modules:
+            enabled:
+                - WebDriver:
+                    url: http://the-internet.herokuapp.com
+                    window_size: false # disabled in ChromeDriver
+                    port: 9515
+                    browser: chrome
+                - \Helper\Acceptance
+                - Asserts
+                
+        # add Codeception\Step\Retry trait to AcceptanceTester to enable retries
+        step_decorators:
+            - Codeception\Step\ConditionalAssertion
+            - Codeception\Step\TryTo
+            - Codeception\Step\Retry
+
+
+extensions:
+    enabled:
+        - Codeception\Extension\RunFailed
+        - Codeception\Extension\RunProcess:
+              0: chromedriver --url-base=/wd/hub
+              sleep: 5
+params: 
+    - env
+
+gherkin: []    
+
+# additional paths
+paths:
+    tests: codeception
+    output: codeception/_output
+    data: codeception/_data
+    support: codeception/_support
+    envs: codeception/_envs
+
+settings:
+    shuffle: false
+    lint: true
